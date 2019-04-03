@@ -1,0 +1,68 @@
+%YAML 1.2
+---
+name: Brainlet
+file_extensions: [bl]
+scope: source.bl
+contexts:
+  main:
+    - match: \b(INCLUDE|EXCLUDE|ADD|SUB|PROD|DIV|MOD|GRAZE|PARTITION|STEP|JUMP|SET|RANGE|INPUT|CUT|COPY|PASTE|RAND|PRINT|PRINTMEMORY|PRINTDECMEMORY|PRINTBINMEMORY|PRINTHEXMEMORY|NEWLINE)\b
+      scope: variable.annotation.bl
+    - match: \b(IF|END|LOOP|BREAKLOOP|CONDITIONALJUMP|ANCHOR|JUMPANCHOR|JUMPLINE)\b
+      scope: keyword.function.bl
+    - match: \b(TYPECAST|TYPE)\b
+      scope: variable.annotation.bl
+      push: string
+    - match: \b(EXEC)\b
+      scope: keyword.function.bl
+      push: Bf
+    - match: ' '
+      push: paramater
+    - match: '#'
+      scope: comment.bl
+      push: comment
+
+  paramater:
+    - match: '\[CUR\]|\[\b[0-9]+\b\]|\b[0-9]+\b'
+      scope: constant.numeric.bl
+    - match: '\b[a-zA-Z0-9]+\b'
+      scope: entity.name.bl
+    - match: '\!=|\~=|\=|\>|\<'
+      scope: keyword.function.bl
+    - match: ' '
+      push: paramater
+    - match: '$'
+      pop: true
+    - match: '#'
+      scope: comment.bl
+      push: comment
+
+  comment:
+    - match: .
+      scope: comment.bl
+    - match: '$'
+      pop: true
+
+  string:
+    - match: .
+      scope: string.bl
+    - match: '#'
+      scope: comment.bl
+      push: comment
+    - match: '$'
+      pop: true
+
+  Bf:
+    - match: '\+|-|,|\.'
+      scope: variable.annotation.bl
+    - match: '>|<'
+      scope: keyword.function.bl
+    - match: '\[|\]'
+      scope: entity.name.bl
+    - match: '#'
+      scope: comment.bl
+      push: comment
+    - match: \b(ENDEXEC)\b
+      scope: keyword.function.bl
+      pop: true
+    - match: .
+      scope: comment.bl
